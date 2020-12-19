@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Anamnesis.App.Views.SourceControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Anamnesis.App.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:acBehaviors="clr-namespace:WPFTextBoxAutoComplete;assembly=WPFTextBoxAutoComplete"
+             DataContext="{Binding SourceControlViewModel, Source={StaticResource Locator}}">
+
+    <Grid MinWidth="200" Style="{StaticResource ContentRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <StackPanel x:Name="Form" Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal" />
+                        <Setter Property="Margin" Value="0,0,0,6" />
+                    </Style>
+                    <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                        <Setter Property="Width" Value="175" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                    </Style>
+                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                        <Setter Property="Padding" Value="0,3" />
+                    </Style>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
+                        <Setter Property="Padding" Value="0,3" />
+                    </Style>
+                </StackPanel.Resources>
+
+                <StackPanel>
+                    <Label>Low Date</Label>
+                    <DatePicker 
+                    SelectedDate="{Binding Manager.ChangesetQuery.LowDate, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                    Width="150" />
+                </StackPanel>
+
+                <StackPanel>
+                    <Label>High Date</Label>
+                    <DatePicker 
+                    SelectedDate="{Binding Manager.ChangesetQuery.HighDate, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                    Width="150" />
+                </StackPanel>
+
+                <StackPanel>
+                    <Label>Selected Changeset Authors</Label>
+                    <ListView x:Name="lvSelectedChangesetAuthors" 
+                    Width="300" 
+                    ItemsSource="{Binding Manager.ChangesetQuery.SelectedChangesetAuthors, Mode=TwoWay}"
+                    MinHeight="150"
+                    MaxHeight="150"
+                    BorderThickness="1"/>
+                </StackPanel>
+
+                <StackPanel Margin="175,0,0,6">
+                    <Label Width="125">Source Control User</Label>
+                    <TextBox 
+		            Width="175"
+		            HorizontalAlignment="Center"
+		            Text="{Binding Manager.UserName, UpdateSourceTrigger=PropertyChanged}" 
+		            acBehaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding Manager.ChangesetQuery.AuthorizedUsers}" />
+                    <!-- Auto complete behavior comes from: github.com/Nimgoble/WPFTextBoxAutoComplete/ -->
+                </StackPanel>
+
+                <StackPanel Margin="252,0,0,12" HorizontalAlignment="Left">
+                    <Button Content="Add User" Command="{Binding AddUserCommand}" />
+                    <Button x:Name="btnRemoveAuthor" Content="Remove Author" Margin="10,0,0,0" 
+                        Command="{Binding RemoveAuthorCommand}" CommandParameter="{Binding SelectedItems, ElementName=lvSelectedChangesetAuthors}" />
+                </StackPanel>
+
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="175" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="6" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0">Check Ins</Label>
+
+            <DataGrid Grid.Row="0" Grid.Column="1" BorderThickness="1" ItemsSource="{Binding Manager.CheckIns}" />
+
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,6" HorizontalAlignment="Left" Orientation="Horizontal">
+                <Button Content="Run" Command="{Binding FindCheckInsCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <ProgressBar Grid.Row="3" Minimum="0" Maximum="1" Height="16" IsIndeterminate="True" Visibility="{Binding ProgressBarVisibility}" />
+    </Grid>
+</UserControl>
