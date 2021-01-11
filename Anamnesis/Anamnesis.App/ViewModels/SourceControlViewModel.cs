@@ -28,12 +28,14 @@ namespace Anamnesis.App.ViewModels
         public SourceControlViewModel()
         {
             Manager = new Manager(AppLogger);
-            AddUserCommand = new RelayCommand(AddUser);
+            AddUserCommand = new RelayCommand(AddAuthor);
             RemoveAuthorCommand = new RelayCommand<IList>((l) => RemoveAuthor(l));
-            FindCheckInsCommand = new RelayCommand(async () => await InitiateFindCheckInsAsync(), () => !IsBusy);
+
+            bool findCheckInsFunction() => Manager.FindSourceControlCheckIns();
+            FindCheckInsCommand = new RelayCommand(async () => await InitiateProcessAsync(findCheckInsFunction, FindCheckInsCommand), () => !IsBusy);
         }
 
-        private void AddUser()
+        private void AddAuthor()
         {
             if (!string.IsNullOrEmpty(Manager.UserName) &&
                 !Manager.ChangesetQuery.SelectedChangesetAuthors.Contains(Manager.UserName) &&

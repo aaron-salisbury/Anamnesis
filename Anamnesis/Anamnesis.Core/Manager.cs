@@ -88,6 +88,12 @@ namespace Anamnesis.Core
 
         public bool FindSourceControlCheckIns()
         {
+            if (!Validate() || !ChangesetQuery.Validate())
+            {
+                _logger.Error("Failed to begin searching source control. Invalid settings.");
+                return false;
+            }
+
             try
             {
                 // Save users used in query since they are usually the same every time for the person running this.
